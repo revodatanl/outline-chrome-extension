@@ -24,7 +24,7 @@ export async function fetchWithTimeout(url, options = {}, timeout = FETCH_TIMEOU
         const timer = setTimeout(() => {
             reject(new Error("Request timed out"));
         }, timeout);
-        fetch(url, options)
+        fetch(url, { credentials: "include", ...options })
             .then(response => {
                 clearTimeout(timer);
                 resolve(response);
@@ -159,12 +159,25 @@ export function createMetaTable({ pageTitle, tabUrl, metaAuthor, metaPublished, 
 
 /**
  * Creates API headers for Outline API requests.
+ * Databricks Apps consumes Authorization, so the Outline key is sent as
+ * X-Outline-Token and (via withBodyToken) in the JSON body as `token`.
  * @param {string} apiToken - The API token for authorization.
  * @returns {Object} The headers object.
  */
 export function createApiHeaders(apiToken) {
     return {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiToken}`
+        "X-Outline-Token": apiToken
     };
+}
+
+/**
+ * JSON body for Outline RPC. Includes `token` so Outline authenticates even
+ * when Authorization never leaves the Databricks Apps proxy.
+ * @param {Object} payload - RPC fields.
+ * @param {string} apiToken - Outline API key.
+ * @returns {string} JSON string.
+ */
+export function withBodyToken(payload, apiToken) {
+    return JSON.stringify({ ...payload, token: apiToken });
 }

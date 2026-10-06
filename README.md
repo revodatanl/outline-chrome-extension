@@ -26,6 +26,10 @@ A Chrome extension that allows you to easily clip and save web content to your O
 3. Add your API token (can be generated in Outline settings)
 4. Click "Save" and "Check Connection" to verify everything works
 
+### Databricks Apps
+
+Databricks Apps consumes `Authorization`. This fork sends the Outline API key in the JSON body as `token` and as `X-Outline-Token`, and uses `credentials: "include"` so the Databricks browser session can pass the Apps proxy. Stay signed in to Databricks in the same browser. Do not put the Outline key in `Authorization`.
+
 ## Usage
 
 1. Select text on any webpage

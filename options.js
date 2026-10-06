@@ -103,9 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const response = await fetch(testEndpoint, {
                     method: "POST",
+                    credentials: "include",
                     headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+                        "Content-Type": "application/json",
+                        "X-Outline-Token": token
+                    },
+                    body: JSON.stringify({ token })
                 });
                 if (response.ok) {
                     this.connectionStatusDiv.textContent = "Connection successful!";

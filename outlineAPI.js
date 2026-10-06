@@ -3,7 +3,7 @@
 // Change 2: Now you create an instance with outlineUrl and apiToken.
 
 import { FETCH_TIMEOUT, MAX_RETRIES, INITIAL_BACKOFF, OutlineApiError } from './config.js';
-import { retryFetch, parseApiError, debugLog, createApiHeaders } from './utils.js';
+import { retryFetch, parseApiError, debugLog, createApiHeaders, withBodyToken } from './utils.js';
 
 /**
  * Class representing the Outline API.
@@ -32,13 +32,13 @@ export class OutlineAPI {
         const response = await retryFetch(endpoint, {
             method: "POST",
             headers: this.headers,
-            body: JSON.stringify({
+            body: withBodyToken({
                 name: collectionName,
                 description: "",
                 permission: "read",
                 color: "#123123",
                 private: false,
-            }),
+            }, this.apiToken),
         });
         if (!response.ok) {
             const errorMsg = await parseApiError(response, "Collection creation failed");
@@ -68,7 +68,7 @@ export class OutlineAPI {
         const response = await retryFetch(endpoint, {
             method: "POST",
             headers: this.headers,
-            body: JSON.stringify(payload),
+            body: withBodyToken(payload, this.apiToken),
         });
         if (!response.ok) {
             const errorMsg = await parseApiError(response, "Document creation failed");
@@ -88,7 +88,7 @@ export class OutlineAPI {
         const response = await retryFetch(endpoint, {
             method: "POST",
             headers: this.headers,
-            body: JSON.stringify({ id: documentId }),
+            body: withBodyToken({ id: documentId }, this.apiToken),
         });
         if (!response.ok) {
             return null;
